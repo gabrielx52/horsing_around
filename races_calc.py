@@ -1,5 +1,4 @@
 """Python script to parse horse race pdfs and extract winners and odds."""
-
 import os
 import re
 from datetime import timedelta, date
@@ -9,6 +8,7 @@ from PyPDF2 import PdfFileReader
 races = []
 directory = os.path.abspath('./race_results/arlington/2016')
 
+single_pdf = os.path.abspath('./race_results/arlington/2016/may_13.pdf')
 
 track_codes = {'KD': (9, 10),
                'SAR': (7, 8, 9, 10),
@@ -31,16 +31,18 @@ def daterange(start_date, end_date):
     for n in range(int((end_date - start_date).days)):
         yield start_date + timedelta(n)
 
-start_date = date(2010, 1, 1)
-end_date = date(2016, 1, 1)
-for single_date in daterange(start_date, end_date):
-    print(single_date.strftime("%Y-%m-%d"))
+# start_date = date(2010, 1, 1)
+# end_date = date(2016, 1, 1)
+# for single_date in daterange(start_date, end_date):
+#     print(single_date.strftime("%Y-%m-%d"))
 
 # print(pdf_url)
 
 for pdf in os.listdir(directory):
-    with open(os.path.join(directory, pdf), 'rb') as pdfFileObj:
-        reader = PdfFileReader(pdfFileObj)
+    # print(pdf)
+    with open(f'./race_results/arlington/2016/{pdf}', 'rb') as pdfFileObj:
+    # with open(os.path.join(directory, pdf), 'rb') as pdfFileObj:
+        reader = PdfFileReader(pdfFileObj, strict=False)
         if reader.isEncrypted:
             reader.decrypt('')
         content = reader.getPage(0)
@@ -59,3 +61,25 @@ for pdf in os.listdir(directory):
             elif 'WinPlace' in pdf_text:
                 horse_num = re.search(f'(?<=WinPlace\\n).[^{winner}]*', pdf_text)
                 print(f'Race: {i + 1}, Number: {horse_num.group(0)}')
+
+
+# with open('./race_results/arlington/2016/may_8.pdf', 'rb') as pdfFileObj:
+#     reader = PdfFileReader(pdfFileObj)
+#     if reader.isEncrypted:
+#         reader.decrypt('')
+#     content = reader.getPage(0)
+#     pdf_text = content.extractText()
+#     race_day_location = re.search(".*(?=-Race1)", pdf_text)
+#     print(race_day_location.group(0))
+#     for i in range(reader.getNumPages()):
+#         content = reader.getPage(i)
+#         pdf_text = content.extractText()
+#         # Extracting the winning horse's name with regex.
+#         winner = re.search('(?<=Winner:\\n).[^,]*', pdf_text)
+#         # Extracting the winning horse's number with regex.
+#         if 'WinPlaceShow' in pdf_text:
+#             horse_num = re.search(f'(?<=WinPlaceShow\\n).[^{winner}]*', pdf_text)
+#             print(f'Race: {i + 1}, Number: {horse_num.group(0)}')
+#         elif 'WinPlace' in pdf_text:
+#             horse_num = re.search(f'(?<=WinPlace\\n).[^{winner}]*', pdf_text)
+#             print(f'Race: {i + 1}, Number: {horse_num.group(0)}')
