@@ -6,22 +6,23 @@ from time import sleep
 import requests
 
 
-# TRACK_CODES = [('KD', 9, 10),
-#                ('SAR', 7, 10),
-#                ('BEL', 4, 8),
-#                ('SA', 1, 8),
-#                ('KEE', 4, 11),
-#                ('DMR', 7, 12),
-#                ('CD', 4, 12),
-#                ('AQU', 1, 6),
-#                ('OP', 1, 6)]
+TRACK_CODES = [('KD', 9, 10),
+               ('SAR', 7, 10),
+               ('BEL', 4, 8),
+               ('SA', 1, 8), 
+               ('KEE', 4, 11),
+               ('DMR', 7, 12),
+               ('CD', 4, 12),
+               ('AQU', 1, 5),
+               ('AQU', 11, 12)
+               ('OP', 1, 6)]
 
-TRACK_CODES = [('BEL', 4, 8)]
+# TRACK_CODES = [('AQU', 1, 5)]
 
 
 def date_range(start_month, end_month):
     """Generate all dates in date range."""
-    for year in list(range(2010, 2017)):
+    for year in list(range(2010, 2017)):   
         start_date = date(year, start_month, 1)
         end_date = date(year, end_month, 1)
         for n in range(int((end_date - start_date).days)):
