@@ -48,7 +48,7 @@ def pdf_getter():
             input('Check for captcha\nPress any key to continue')
             r = requests.get(url, headers={'User-agent': 'Wayne Mazerati'})
         if len(r.content) > 10000:
-            file = f'../results/{track}/{d.month}_{d.day}_{d.year}.pdf'
+            file = f'../results/{track}/{d.year}_{d.month}_{d.day}.pdf'
             with open(file, 'wb') as f:
                 f.write(r.content)
                 print(f'Saved race data for {track} on {d.month}/{d.day}/{d.year}')
