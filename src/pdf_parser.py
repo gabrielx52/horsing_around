@@ -19,7 +19,7 @@ def pdf_date_formater():
         for pdf in os.listdir(sub_dir):
             try:
                 sn = pdf.rstrip('.pdf').split('_')
-                new_name = '_'.join([sn[2],
+                new_name = '-'.join([sn[2],
                                      sn[0].rjust(2, '0'),
                                      sn[1].rjust(2, '0')]) + '.pdf'
                 os.rename(sub_dir + pdf, sub_dir + new_name)
