@@ -16,7 +16,7 @@ import requests
 #                ('AQU', 1, 6),
 #                ('OP', 1, 6)]
 
-TRACK_CODES = [('SAR', 7, 10)]
+TRACK_CODES = [('BEL', 4, 8)]
 
 
 def date_range(start_month, end_month):
@@ -51,3 +51,11 @@ def pdf_getter():
             with open(file, 'wb') as f:
                 f.write(r.content)
                 print(f'Saved race data for {track} on {d.month}/{d.day}/{d.year}')
+
+
+def month_converter(month):
+    """Convert month name string to number."""
+    months = ['January', 'February', 'March', 'April', 'May',
+              'June', 'July', 'August', 'September', 'October',
+              'November', 'December']
+    return months.index(month) + 1
