@@ -44,16 +44,8 @@ def pdf_getter():
         while r.headers['Content-Type'] != 'application/pdf':
             input('Check for captcha\nPress any key to continue')
             r = requests.get(url, headers={'User-agent': 'Wayne Mazerati'})
-        if len(r.content) > 10000:
+        if len(r.content) > 15000:
             file = '../results/{}/{}.pdf'.format(track, d)
             with open(file, 'wb') as f:
                 f.write(r.content)
                 print('Saved race data for {} on {}'.format(track, d))
-
-
-def month_converter(month):
-    """Convert month name string to number."""
-    months = ['January', 'February', 'March', 'April', 'May',
-              'June', 'July', 'August', 'September', 'October',
-              'November', 'December']
-    return months.index(month) + 1
