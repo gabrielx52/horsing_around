@@ -35,3 +35,11 @@ def pdf_date_formater():
             except Exception as e:
                 with open('./../results/error_log.txt', 'a+') as f:
                     f.write(pdf + ' ' + str(e) + '\n')
+
+
+def month_converter(month):
+    """Convert month name string to number."""
+    months = ['January', 'February', 'March', 'April', 'May',
+              'June', 'July', 'August', 'September', 'October',
+              'November', 'December']
+    return str(months.index(month) + 1).rjust(2, '0')
