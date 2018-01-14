@@ -36,7 +36,7 @@ def url_gen():
                                      d.day, d.year), track[0], d
 
 
-def pdf_getter():
+def pdf_getter():  # pragma: no cover
     """Download race results PDFs using requests lib."""
     for res in url_gen():
         url, track, d = res

@@ -16,14 +16,14 @@ def pdf_gen():
                 yield t_dir + '/' + pdf
 
 
-def delete_empty_pdfs():
+def delete_empty_pdfs():  # pragma: no cover
     """Delete PDFs if size is too small."""
     for pdf in pdf_gen():
         if os.path.getsize(pdf) < 15000:
             os.remove(pdf)
 
 
-def pdf_date_formater():
+def pdf_date_formater():  # pragma: no cover
     """Change the PDF name format from Y_M_D to Y-M-D."""
     for track in TRACKS:
         sub_dir = RES_DIR + '/{}/'.format(track)

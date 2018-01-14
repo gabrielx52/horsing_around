@@ -4,7 +4,7 @@ import re
 
 from PyPDF2 import PdfFileReader
 
-from helpers import month_converter, pdf_gen
+from src.helpers import month_converter, pdf_gen
 
 TRACKS = ['AQU', 'BEL', 'KD', 'SA', 'SAR']
 
@@ -36,8 +36,9 @@ def page_parser():
             results['HorseNum'] = number_finder(page, results['Winner'])
             results['Odds'] = re.search('\\n[0-9]+\.[0-9]+', page).group(0).lstrip('\n')
             yield results
-        except:
-            pass
+        except Exception as e:  # pragma: no cover
+            with open('./../results/error_log.txt', 'a+') as f:
+                f.write(str(e) + '\n')
 
 
 def date_format(raw_date):
