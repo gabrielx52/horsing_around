@@ -25,7 +25,6 @@ def create_race_result_tables():
     try:
         cur.execute("""CREATE TABLE TRACK (
                                             TrackID serial PRIMARY KEY,
-                                            TrackCode VARCHAR(3) UNIQUE,
                                             TrackName VARCHAR(50) UNIQUE
                                            );
                     """)
@@ -39,7 +38,7 @@ def create_race_result_tables():
                                           RaceDate date,
                                           RaceNum INT,
                                           Odds DECIMAL,
-                                          SlotNum INT,
+                                          SlotNum VARCHAR(5),
                                           HorseID INT REFERENCES HORSE(HorseID),
                                           TrackID INT REFERENCES TRACK(TrackID)
                                           );
@@ -75,14 +74,41 @@ def db_populate():
         try:
             sql = """INSERT INTO horse (HorseName)
                      VALUES (%s)
-                     WHERE NOT EXIXTS (SELECT HorseName
-                                       FROM horse
-                                       WHERE HorseName  = (%s));"""
-            data = (res['Winner'], res['Winner'], )
+                     ON CONFLICT DO NOTHING;"""
+            data = (res['Winner'],)
+            cur.execute(sql, data)
+            conn.commit()
+            sql = """INSERT INTO track (TrackName)
+                     VALUES (%s)
+                     ON CONFLICT DO NOTHING;"""
+            data = (res['Track'],)
+            cur.execute(sql, data)
+            conn.commit()
+            sql = """INSERT INTO race (RaceDate, RaceNum, Odds, SlotNum, HorseID, TrackID)
+                     VALUES (%s, %s, %s, %s,(SELECT HorseID
+                                             FROM horse
+                                             WHERE HorseName = (%s)),
+                                            (SELECT TrackID
+                                             FROM track
+                                             WHERE TrackName = (%s)))
+                     ON CONFLICT DO NOTHING;"""
+            data = (res['Date'],
+                    res['RaceNum'],
+                    res['Odds'],
+                    res['HorseNum'],
+                    res['Winner'],
+                    res['Track'],)
             cur.execute(sql, data)
             conn.commit()
         except Exception as e:  # pragma: no cover
             with open('./../results/error_log.txt', 'a+') as f:
-                f.write(str(e) + ' ' + str(res) + '\n')
+                f.write('DB_POP ERR: ' + str(e) + ' ' + str(res) + '\n')
     cur.close()
     conn.close()
+
+
+def drop_add_pop_tables():
+    """Drop tables, create, populate new tables."""
+    drop_race_db_tables()
+    create_race_result_tables()
+    db_populate()

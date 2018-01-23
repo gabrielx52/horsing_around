@@ -25,6 +25,17 @@ def pdf_to_text():
                 yield content.extractText()
 
 
+def single_pdf_to_text():
+    """Parse PDFs fpr race result data."""
+    with open('/Users/gabrielmeringolo/Python/day_at_the_races/results/SAR/2013-09-02.pdf', 'rb') as f:
+        reader = PdfFileReader(f, strict=False)
+        if reader.isEncrypted:
+            reader.decrypt('')
+        for i in range(reader.getNumPages()):
+            content = reader.getPage(i)
+            yield content.extractText()
+
+
 def page_parser():
     """Parse race result pages."""
     for page in pdf_to_text():
@@ -35,12 +46,19 @@ def page_parser():
             results['Date'] = date_format(track_date[1])
             results['RaceNum'] = int(re.search('(?<=Race)(\d+)', page).group(0))
             results['Winner'] = re.search('(?<=Winner:\\n).[^,]*', page).group(0)
-            results['HorseNum'] = int(number_finder(page, results['Winner']))
+            results['HorseNum'] = number_finder(page, results['Winner'])
             results['Odds'] = float(re.search('\\n[0-9]+\.[0-9]+', page).group(0).lstrip('\n'))
-            yield results
+            if len(results['HorseNum']) < 6:
+                yield results
+            else:
+                with open('./../results/error_log.txt', 'a+') as f:
+                    f.write('PARSE ERR: ' + str(results) + '\n')
+                    continue
+        except AttributeError:  # pragma: no cover
+            pass
         except Exception as e:  # pragma: no cover
             with open('./../results/error_log.txt', 'a+') as f:
-                f.write(str(e) + '\n')
+                f.write('PP ERR: ' + str(type(e).__name__) + str(results) + '\n')
 
 
 def date_format(raw_date):
@@ -57,3 +75,31 @@ def number_finder(page, horse):
         return re.search('(?<=WinPlaceShow\\n).[^{}]*'.format(horse), page).group(0)
     elif 'WinPlace' in page:
         return re.search('(?<=WinPlace\\n).[^{}]*'.format(horse), page).group(0)
+
+
+# def dead_heats_page_parser():
+#     """Parse race result pages."""
+#     for page in pdf_to_text():
+#         try:
+#             results = {}
+#             track_date = re.search(".*(?=-Race)", page).group(0).split('-')
+#             results['Track'] = track_date[0]
+#             results['Date'] = date_format(track_date[1])
+#             results['RaceNum'] = int(re.search('(?<=Race)(\d+)', page).group(0))
+#             if 'DeadHeats' not in page:
+#                 results['Winner'] = re.search('(?<=Winner:\\n).[^,]*', page).group(0)
+#                 results['HorseNum'] = number_finder(page, results['Winner'])
+#                 results['Odds'] = float(re.search('\\n[0-9]+\.[0-9]+', page).group(0).lstrip('\n'))
+#                 if len(results['HorseNum']) < 6:
+#                     yield results
+#                 else:
+#                     with open('./../results/error_log.txt', 'a+') as f:
+#                         f.write('PARSE ERR: ' + str(results) + '\n')
+#                         continue
+#             else:
+                
+#         except AttributeError:  # pragma: no cover
+#             pass
+#         except Exception as e:  # pragma: no cover
+#             with open('./../results/error_log.txt', 'a+') as f:
+#                 f.write('PP ERR: ' + str(type(e).__name__) + str(results) + '\n')
