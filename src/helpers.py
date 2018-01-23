@@ -2,7 +2,8 @@
 import os
 
 
-TRACKS = ['AQU', 'BEL', 'KD', 'SA', 'SAR']
+# TRACKS = ['AQU', 'BEL', 'KD', 'SA', 'SAR']
+TRACKS = ["KD"]
 
 RES_DIR = os.path.abspath('./../results')
 

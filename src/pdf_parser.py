@@ -2,9 +2,11 @@
 import os
 import re
 
+from datetime import datetime
+
 from PyPDF2 import PdfFileReader
 
-from src.helpers import month_converter, pdf_gen
+from helpers import month_converter, pdf_gen
 
 TRACKS = ['AQU', 'BEL', 'KD', 'SA', 'SAR']
 
@@ -31,10 +33,10 @@ def page_parser():
             track_date = re.search(".*(?=-Race)", page).group(0).split('-')
             results['Track'] = track_date[0]
             results['Date'] = date_format(track_date[1])
-            results['RaceNum'] = re.search('(?<=Race)(\d+)', page).group(0)
+            results['RaceNum'] = int(re.search('(?<=Race)(\d+)', page).group(0))
             results['Winner'] = re.search('(?<=Winner:\\n).[^,]*', page).group(0)
-            results['HorseNum'] = number_finder(page, results['Winner'])
-            results['Odds'] = re.search('\\n[0-9]+\.[0-9]+', page).group(0).lstrip('\n')
+            results['HorseNum'] = int(number_finder(page, results['Winner']))
+            results['Odds'] = float(re.search('\\n[0-9]+\.[0-9]+', page).group(0).lstrip('\n'))
             yield results
         except Exception as e:  # pragma: no cover
             with open('./../results/error_log.txt', 'a+') as f:
@@ -45,7 +47,8 @@ def date_format(raw_date):
     """Format regexed date to Y-M-D."""
     split_date = re.split('(\d+)', raw_date)
     mth, dy, yr = map(split_date.__getitem__, [0, 1, 3])
-    return '{}-{}-{}'.format(yr, month_converter(mth), dy.rjust(2, '0'))
+    d_str = '{} {} {}'.format(yr, month_converter(mth), dy.rjust(2, '0'))
+    return datetime.strptime(d_str, "%Y %m %d")
 
 
 def number_finder(page, horse):
