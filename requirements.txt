@@ -22,7 +22,7 @@ psycopg2==2.7.3.2
 ptyprocess==0.5.2
 py==1.4.34
 Pygments==2.2.0
-PyPDF2==1.26.0
+PyPDF2==1.27.5
 pytest==3.2.3
 pytest-cov==2.5.1
 pytest-watch==4.1.0
